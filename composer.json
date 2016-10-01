@@ -1,0 +1,18 @@
+{
+    "name": "nstdio/notymo",
+    "description": "Android and iOS push notification library.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Edgar Asatryan",
+            "email": "nstdio@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "nstdio\\": "src/"
+        }
+    }
+}
