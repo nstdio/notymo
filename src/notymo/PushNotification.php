@@ -1,50 +1,62 @@
 <?php
+namespace nstdio\notymo;
 
 /**
  * Class PushNotificationComponent
- * @property APNSNotificationComponent APNSNotification
- * @property GCMNotificationComponent GCMNotification
  */
 class PushNotification implements PushNotificationInterface
 {
     /**
-     * @var PushNotificationInterface|PushNotificationInterface[]
+     * @var PushNotificationInterface[]
      */
-    private $notificationImpl;
+    private $notificationImpl = array();
 
     /**
-     * @var Device tokens for iOS devices
+     * PushNotification constructor.
+     *
+     * @param array $config Configuration for notification implementations.
+     *
+     * Available keys.
+     * - skipApns Whether use APNS notifications.
+     * - skipGcm  Whether use GCM notifications
+     * - apns
+     *      - live
+     *      - cert
+     *      - sandboxCert
+     * - gcm
+     *      - apiKey Google Api key for GCM service.
      */
-    private $apnsTokens = array();
-
-    /**
-     * @var Device tokens for Android devices
-     */
-    private $gcmTokens = array();
-
-    /**
-     * @param $userId
-     */
-    public function findAndSetDeviceTokens($userId)
+    public function __construct($config = array())
     {
-        $dt = $this->deviceTokenModel->findAllByUserId($userId, array('device_token', 'gcm_token'));
-        foreach ($dt as $value) {
-            $deviceToken = (object)$value['DeviceToken'];
+        $this->notificationImpl = array();
 
-            if ($deviceToken->device_token !== null) {
-                $this->apnsTokens[] = $deviceToken->device_token;
+        $this->initApns($config);
+        $this->initGcm($config);
+    }
+
+    /**
+     * @param $config
+     */
+    private function initApns($config)
+    {
+        if (!isset($config['skipApns'])) {
+            if (!isset($config['apns'])) {
+                throw new \InvalidArgumentException("Configuration required for APNSNotification.");
             }
-            if ($deviceToken->gcm_token !== null) {
-                $this->gcmTokens[] = $deviceToken->gcm_token;
-            }
+            $this->notificationImpl['apns'] = new APNSNotification($config['apns']);
         }
-        $this->initImplementations();
-        if (is_array($this->notificationImpl)) {
-            foreach ($this->notificationImpl as $key => $impl) {
-                if ($this->userSettings->isPushNotificationEnabled($userId)) {
-                    $impl->setToken($key === 'apns' ? $this->apnsTokens : $this->gcmTokens);
-                }
+    }
+
+    /**
+     * @param $config
+     */
+    private function initGcm($config)
+    {
+        if (!isset($config['skipGcm'])) {
+            if (!isset($config['gcm']) || !isset($config['gcm']['apiKey'])) {
+                throw new \InvalidArgumentException("Configuration required for GCMNotification.");
             }
+            $this->notificationImpl['gcm'] = new GCMNotification($config['gcm']['apiKey']);
         }
     }
 
@@ -56,70 +68,24 @@ class PushNotification implements PushNotificationInterface
         $this->invokeMethod('send');
     }
 
-    /**
-     * @param mixed $alert
-     */
-    public function setMessage($alert)
-    {
-        $this->invokeMethod('setAlert', array($alert));
-    }
-
-    /**
-     * Sets notification sound to money earning sound
-     */
-    public function setSoundMoneySound()
-    {
-        $this->setSound(self::SOUND_MONEY);
-    }
-
-    /**
-     * @param array $customData
-     */
-    public function setCustomData(array $customData)
-    {
-        $this->invokeMethod('setCustomData', array($customData));
-    }
-
-    /**
-     * @param $token
-     */
-    public function setToken($token)
-    {
-        $this->invokeMethod('setToken', array($token));
-    }
-
-    /**
-     * @param $sound
-     */
-    public function setSound($sound)
-    {
-        $this->invokeMethod('setSound', array($sound));
-    }
-
-    private function initImplementations()
-    {
-        if (!empty($this->gcmTokens) && !empty($this->apnsTokens)) {
-            $this->notificationImpl['apns'] = $this->APNSNotification;
-            $this->notificationImpl['gcm'] = $this->GCMNotification;
-        } elseif (!empty($this->gcmTokens)) {
-            $this->notificationImpl = $this->GCMNotification;
-            $this->notificationImpl->setToken($this->gcmTokens);
-        } elseif (!empty($this->apnsTokens)) {
-            $this->notificationImpl = $this->APNSNotification;
-            $this->notificationImpl->setToken($this->apnsTokens);
-        }
-    }
-
     private function invokeMethod($method, $args = array())
     {
-        if (is_array($this->notificationImpl)) {
-            foreach ($this->notificationImpl as $item) {
-                if (method_exists($item, $method)) {
-                    call_user_func_array(array($item, $method), $args);
-                }
-            }
-        } elseif ($this->notificationImpl instanceof PushNotificationInterface) {
-            call_user_func_array(array($this->notificationImpl, $method), $args);
+        foreach ($this->notificationImpl as $item) {
+            call_user_func_array(array($item, $method), $args);
         }
+    }
+
+    public function enqueue(MessageInterface $message)
+    {
+        if ($message->getType() === MessageInterface::TYPE_IOS && isset($this->notificationImpl['apns'])) {
+            $this->notificationImpl['apns']->enqueue($message);
+        } elseif ($message->getType() === MessageInterface::TYPE_ANDROID && isset($this->notificationImpl['gcm'])) {
+            $this->notificationImpl['gcm']->enqueue($message);
+        }
+    }
+
+    public function setStreamWrapper(Connection $wrapper)
+    {
+        throw new \RuntimeException('Not yet implemented.');
     }
 }

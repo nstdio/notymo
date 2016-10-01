@@ -1,4 +1,5 @@
 <?php
+namespace nstdio\notymo;
 
 /**
  * Interface PushNotificationInterface
@@ -7,11 +8,7 @@ interface PushNotificationInterface
 {
     public function send();
 
-    public function setToken($token);
+    public function enqueue(MessageInterface $message);
 
-    public function setMessage($alert);
-
-    public function setCustomData(array $customData);
-
-    public function setSound($sound);
+    public function setStreamWrapper(Connection $wrapper);
 }
