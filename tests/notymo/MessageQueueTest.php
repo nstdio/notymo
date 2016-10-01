@@ -10,6 +10,8 @@ class MessageQueueTest extends PHPUnit_Framework_TestCase
      */
     private $queue;
 
+    private $messageClassName = 'nstdio\notymo\Message';
+
     public function setUp()
     {
         $this->queue = new MessageQueue();
@@ -21,7 +23,7 @@ class MessageQueueTest extends PHPUnit_Framework_TestCase
         $range = range(0, 9);
         $token = "token1";
         foreach ($range as $item) {
-            $msgMock = $this->getMockBuilder('nstdio\notymo\Message')
+            $msgMock = $this->getMockBuilder($this->messageClassName)
                 ->setMethods(array("getToken"))
                 ->getMock();
 

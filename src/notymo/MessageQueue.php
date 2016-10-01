@@ -6,7 +6,6 @@ use Countable;
 use Iterator;
 use SplDoublyLinkedList;
 use SplQueue;
-use Traversable;
 
 /**
  * Class MessageQueue
@@ -14,7 +13,7 @@ use Traversable;
  * @package nstdio\notymo
  * @author  Edgar Asatryan <nstdio@gmail.com>
  */
-class MessageQueue implements Iterator, Countable, ArrayAccess
+class MessageQueue implements Iterator, Countable
 {
     /**
      * @var SplQueue
@@ -83,37 +82,5 @@ class MessageQueue implements Iterator, Countable, ArrayAccess
     public function count()
     {
         return count($this->queue);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offsetExists($offset)
-    {
-        return $this->queue->offsetExists($offset);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offsetGet($offset)
-    {
-        return $this->queue->offsetGet($offset);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offsetSet($offset, $value)
-    {
-
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offsetUnset($offset)
-    {
-        throw new \RuntimeException("Cannot unset any item.");
     }
 }
