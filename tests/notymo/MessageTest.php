@@ -64,4 +64,36 @@ class MessageTest extends PHPUnit_Framework_TestCase
         self::assertEquals(array_merge($tokens, $tokens), $this->message->getToken());
 
     }
+
+    /**
+     * @expectedException \nstdio\notymo\exception\UnsupportedNotificationType
+     */
+    public function testIncorrectMessageType()
+    {
+        $this->message->setType(PHP_INT_MAX);
+    }
+
+    public function testSetProperties()
+    {
+        $message = "This is expected message";
+        $token = "token";
+        $data = array("key_0" => "value_0", "key_1" => "value_1");
+        $badge = 5;
+        $sound = "default";
+        $type = Message::TYPE_IOS;
+
+        $this->message->setMessage($message);
+        $this->message->setToken($token);
+        $this->message->setCustomData($data);
+        $this->message->setBadge($badge);
+        $this->message->setSound($sound);
+        $this->message->setType($type);
+
+        self::assertEquals($message, $this->message->getMessage());
+        self::assertEquals($token, $this->message->getToken());
+        self::assertEquals($data, $this->message->getCustomData());
+        self::assertEquals($badge, $this->message->getBadge());
+        self::assertEquals($sound, $this->message->getSound());
+        self::assertEquals($type, $this->message->getType());
+    }
 }
