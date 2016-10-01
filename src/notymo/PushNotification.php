@@ -5,28 +5,8 @@
  * @property APNSNotificationComponent APNSNotification
  * @property GCMNotificationComponent GCMNotification
  */
-class PushNotificationComponent extends Component implements PushNotificationInterface
+class PushNotification implements PushNotificationInterface
 {
-    /**
-     * @inheritdoc
-     */
-    public $components = array('GCMNotification', 'APNSNotification');
-
-    /**
-     *
-     */
-    const SOUND_MONEY = 'cha_ching.wav';
-
-    /**
-     * @var DeviceToken
-     */
-    private $deviceTokenModel;
-
-    /**
-     * @var UserSettings
-     */
-    private $userSettings;
-
     /**
      * @var PushNotificationInterface|PushNotificationInterface[]
      */
@@ -41,15 +21,6 @@ class PushNotificationComponent extends Component implements PushNotificationInt
      * @var Device tokens for Android devices
      */
     private $gcmTokens = array();
-
-    /**
-     * @param Controller $controller
-     */
-    public function initialize(Controller $controller)
-    {
-        $this->deviceTokenModel = ClassRegistry::init('DeviceToken');
-        $this->userSettings = ClassRegistry::init('UserSettings');
-    }
 
     /**
      * @param $userId
@@ -88,7 +59,7 @@ class PushNotificationComponent extends Component implements PushNotificationInt
     /**
      * @param mixed $alert
      */
-    public function setAlert($alert)
+    public function setMessage($alert)
     {
         $this->invokeMethod('setAlert', array($alert));
     }

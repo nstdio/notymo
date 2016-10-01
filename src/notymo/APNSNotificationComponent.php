@@ -171,7 +171,7 @@ class APNSNotificationComponent extends Component implements PushNotificationInt
     /**
      * @param $alert
      */
-    public function setAlert($alert)
+    public function setMessage($alert)
     {
         $this->alert = $alert;
     }

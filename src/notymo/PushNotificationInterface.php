@@ -9,7 +9,7 @@ interface PushNotificationInterface
 
     public function setToken($token);
 
-    public function setAlert($alert);
+    public function setMessage($alert);
 
     public function setCustomData(array $customData);
 

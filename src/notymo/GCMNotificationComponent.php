@@ -96,7 +96,7 @@ class GCMNotificationComponent extends Component implements PushNotificationInte
     /**
      * @param $alert
      */
-    public function setAlert($alert)
+    public function setMessage($alert)
     {
         $this->alert = $alert;
     }
