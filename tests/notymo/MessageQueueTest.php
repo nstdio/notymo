@@ -22,7 +22,7 @@ class MessageQueueTest extends PHPUnit_Framework_TestCase
     {
         $range = range(0, 9);
         $token = "token1";
-        foreach ($range as $item) {
+        foreach ($range as $key => $item) {
             $msgMock = $this->getMockBuilder($this->messageClassName)
                 ->setMethods(array("getToken"))
                 ->getMock();
@@ -37,7 +37,7 @@ class MessageQueueTest extends PHPUnit_Framework_TestCase
         self::assertCount(count($range), $this->queue);
 
         /** @var MessageInterface $item */
-        foreach ($this->queue as $item) {
+        foreach ($this->queue as $key => $item) {
             self::assertEquals($token, $item->getToken());
         }
 
