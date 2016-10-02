@@ -40,6 +40,13 @@ class Message implements MessageInterface
      */
     private $type;
 
+    public function __construct($type = null)
+    {
+        if ($type !== null) {
+            $this->setType($type);
+        }
+    }
+
     public function getMessage()
     {
         return $this->message;
