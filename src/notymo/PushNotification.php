@@ -43,7 +43,8 @@ class PushNotification implements PushNotificationInterface
             if (!isset($config['apns'])) {
                 throw new \InvalidArgumentException("Configuration required for APNSNotification.");
             }
-            $this->notificationImpl['apns'] = new APNSNotification($config['apns']);
+            $args = $config['apns'];
+            $this->notificationImpl['apns'] = new APNSNotification($args['live'], $args['cert'], $args['sandboxCert']);
         }
     }
 

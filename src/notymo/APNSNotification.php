@@ -1,5 +1,6 @@
 <?php
 namespace nstdio\notymo;
+
 use nstdio\notymo\exception\InvalidCert;
 
 /**
@@ -45,39 +46,27 @@ class APNSNotification extends AbstractNotification
     /**
      * APNSNotification constructor.
      *
-     * @param array $config
-     * - live
-     * - cert
-     * - sandboxCert
+     * @param bool        $live
+     * @param string|null $apnsCert
+     * @param string|null $apnsSandboxCert
+     *
+     * @throws InvalidCert When cannot find one of certificate files.
      */
-    public function __construct(array $config)
+    public function __construct($live = false, $apnsCert = null, $apnsSandboxCert = null)
     {
         parent::__construct();
+        $this->live = $live;
 
-        $this->init($config);
-    }
-
-    private function init($config)
-    {
-        if (isset($config['live'])) {
-            $this->live = $config['live'];
-        }
-        if (isset($config['cert'])) {
-            $this->apnsCert = $config['cert'];
-        }
-        if (isset($config['sandboxCert'])) {
-            $this->apnsSandboxCert = $config['sandboxCert'];
+        if ($this->live && !is_readable($apnsCert)) {
+            throw new InvalidCert("Cannot find certificate file: " . $this->apnsCert);
         }
 
-        if ($this->live) {
-            if (!is_readable($this->apnsCert)) {
-                throw new InvalidCert("Cannot find certificate file: " . $this->apnsCert);
-            }
-        } else {
-            if (!is_readable($this->apnsSandboxCert)) {
-                throw new InvalidCert("Cannot find certificate file: " . $this->apnsSandboxCert);
-            }
+        if (!$this->live && !is_readable($apnsSandboxCert)) {
+            throw new InvalidCert("Cannot find certificate file: " . $this->apnsSandboxCert);
         }
+
+        $this->apnsCert = $apnsCert;
+        $this->apnsSandboxCert = $apnsSandboxCert;
     }
 
     /**
@@ -192,14 +181,6 @@ class APNSNotification extends AbstractNotification
         return str_replace(array('<', '>'), '', $deviceToken);
     }
 
-    /**
-     * @return string Full qualified url address of APNS server.
-     */
-    private function getRemoteSocketAddress()
-    {
-        return sprintf("%s://%s:%d", $this->scheme, $this->live ? $this->apnsHost : $this->apnsSandboxHost, $this->apnsPort);
-    }
-
     protected function getConnectionParams()
     {
         return array(
@@ -211,5 +192,13 @@ class APNSNotification extends AbstractNotification
             CURLOPT_SSLCERT        => $this->live ? $this->apnsCert : $this->apnsSandboxCert,
             CURLOPT_POST           => true,
         );
+    }
+
+    /**
+     * @return string Full qualified url address of APNS server.
+     */
+    private function getRemoteSocketAddress()
+    {
+        return sprintf("%s://%s:%d", $this->scheme, $this->live ? $this->apnsHost : $this->apnsSandboxHost, $this->apnsPort);
     }
 }
