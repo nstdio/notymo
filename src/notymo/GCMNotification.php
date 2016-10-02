@@ -114,13 +114,13 @@ class GCMNotification extends AbstractNotification
             foreach ($parts as $item) {
                 $clonedMessage = clone $message;
                 $clonedMessage->setToken($item);
-                $this->messageQueue->enqueue($clonedMessage);
+                parent::enqueue($clonedMessage);
             }
 
             $message->setToken($firstElement);
         }
 
-        $this->messageQueue->enqueue($message);
+        parent::enqueue($message);
     }
 
     protected function getConnectionParams()
