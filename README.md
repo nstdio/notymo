@@ -1,6 +1,6 @@
 # notymo [![Build Status](https://travis-ci.org/nstdio/notymo.svg?branch=master)](https://travis-ci.org/nstdio/notymo) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nstdio/notymo/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nstdio/notymo/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/nstdio/notymo/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/nstdio/notymo/?branch=master)
 
-The **notymo** is a library that which can help you to send push notifications on iOS and Andriod devices using single interface. Library has no external dependencies.
+The **notymo** is a library  which can help you to send push notifications on iOS and Andriod devices using single interface. The Library has no external dependencies.
 
 # Installation
 
@@ -33,7 +33,7 @@ $push = new PushNotification(array(
 );
 
 /**
- * If we have multiple recipient and all of them should receive same data we can create
+ * If we have multiple recipients and all of them should receive same data we can create 
  * one single instance of Message class and send messages at once.
  */
 $msg = new Message();
@@ -45,7 +45,7 @@ $msg->setCustomData(array("user_data" => array()));
 $msg->setToken(range(0, 10000));
 
 /**
- * Just clone original message and replace old device tokens by new once for iOS devices.
+ * Just clone original message and replace old device's tokens with new once for iOS devices.
  */
 $msg2 = clone $msg;
 $msg2->setToken(range(10000, 20000));
