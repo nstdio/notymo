@@ -118,17 +118,13 @@ class Message implements MessageInterface
     {
         if ($this->token === null) {
             $this->token = array();
-            $this->token[] = $token;
+            $this->merge($token);
         } elseif (is_string($this->token)) {
             $oldToken = $this->token;
             $this->token = array();
             array_push($this->token, $oldToken, $token);
         } elseif (is_array($this->token)) {
-            if (is_array($token)) {
-                $this->token = array_merge($this->token, $token);
-            } else {
-                $this->token[] = $token;
-            }
+            $this->merge($token);
         }
 
     }
@@ -136,5 +132,17 @@ class Message implements MessageInterface
     public function isMultiple()
     {
         return is_array($this->token);
+    }
+
+    /**
+     * @param $token
+     */
+    private function merge($token)
+    {
+        if (is_array($token)) {
+            $this->token = array_merge($this->token, $token);
+        } else {
+            $this->token[] = $token;
+        }
     }
 }
