@@ -22,6 +22,10 @@ use nstdio\notymo\Message;
 use nstdio\notymo\PushNotification;
 
 $push = new PushNotification(array(
+         // If you dоn't want to use one of the services we can just skip them loading.
+         // It's obvious that the skipped service is not necessary to configure.
+         // 'skipApns' => true,
+         // 'skipGcm'  => true,
         'apns' => array(
             'live' => true, // We need to connect to APNS production server
             'cert' => 'live_cert.pem' // Also we must specify a SSL certificate for sending notification to iOS devices.
