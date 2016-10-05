@@ -1,6 +1,5 @@
 <?php
 namespace nstdio\notymo\exception;
-use nstdio\notymo\PushNotification;
 
 /**
  * Class InvalidCert

@@ -97,6 +97,9 @@ class APNSNotification extends AbstractNotification
     {
         /** @var MessageInterface $message */
         foreach ($this->messageQueue as $message) {
+            if ($message->getType() !== MessageInterface::TYPE_IOS) {
+                continue;
+            }
             $payload = $this->createPayload($message);
             $binMsg = $this->createBinMessage($message, $payload);
             $this->stream->write(CURLOPT_POSTFIELDS, $binMsg);
@@ -160,12 +163,12 @@ class APNSNotification extends AbstractNotification
      */
     private function buildBinMessage($token, $payload)
     {
-        $token = $this->removeTags($token);
+        $token = $this->prepareToken($token);
 
         return chr(0)
         . chr(0)
         . chr(32)
-        . pack('H*', str_replace(' ', '', $token))
+        . pack('H*', $token)
         . chr(0)
         . chr(strlen($payload))
         . $payload;
@@ -176,9 +179,9 @@ class APNSNotification extends AbstractNotification
      *
      * @return mixed
      */
-    private function removeTags($deviceToken)
+    private function prepareToken($deviceToken)
     {
-        return str_replace(array('<', '>'), '', $deviceToken);
+        return strtolower(str_replace(array('<', '>', ' '), '', $deviceToken));
     }
 
     protected function getConnectionParams()
