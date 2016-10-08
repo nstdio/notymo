@@ -39,6 +39,7 @@ class MessageQueueTest extends PHPUnit_Framework_TestCase
         /** @var MessageInterface $item */
         foreach ($this->queue as $key => $item) {
             self::assertEquals($token, $item->getToken());
+            $this->queue->dequeue();
         }
 
         self::assertEmpty($this->queue);

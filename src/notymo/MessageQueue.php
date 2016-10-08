@@ -23,12 +23,17 @@ class MessageQueue implements Iterator, Countable
     public function __construct()
     {
         $this->queue = new SplQueue();
-        $this->queue->setIteratorMode(SplDoublyLinkedList::IT_MODE_DELETE);
+        $this->queue->setIteratorMode(SplDoublyLinkedList::IT_MODE_FIFO);
     }
 
     public function enqueue(MessageInterface $message)
     {
         $this->queue->enqueue($message);
+    }
+
+    public function dequeue()
+    {
+        $this->queue->dequeue();
     }
 
     public function isEmpty()
