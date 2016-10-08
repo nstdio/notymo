@@ -36,29 +36,21 @@ class GCMNotification extends AbstractNotification
         );
     }
 
-    /**
-     *
-     */
-    public function send()
+    protected function sendImpl(MessageInterface $message)
     {
-        if ($this->messageQueue->isEmpty()) {
-            return;
+        $response = $this->handleResponse($this->sendMessage($message));
+
+        if (isset($response['success']) && $response['success'] === 1) {
+            $this->messageQueue->dequeue();
         }
 
-        $this->openConnection();
-
-        /** @var MessageInterface $message */
-        foreach ($this->messageQueue as $message) {
-            $this->sendMessage($message);
-        }
-
-        $this->stream->close();
+        $this->notifyOnEachSent($message, $response);
     }
 
     /**
      * @param $message
      */
-    private function sendMessage($message)
+    private function sendMessage(MessageInterface $message)
     {
         $data = $this->createPayload($message);
 
@@ -131,5 +123,20 @@ class GCMNotification extends AbstractNotification
             CURLOPT_HTTPHEADER     => $this->headers,
             CURLOPT_RETURNTRANSFER => true,
         );
+    }
+
+    /**
+     * @param $response
+     *
+     * @return mixed
+     */
+    private function handleResponse($response)
+    {
+        $decodedResponse = json_decode($response, true);
+        if ($decodedResponse === null) {
+            return $response;
+        }
+
+        return $decodedResponse;
     }
 }

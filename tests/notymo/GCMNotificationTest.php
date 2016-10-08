@@ -34,15 +34,15 @@ class GCMNotificationTest extends PHPUnit_Framework_TestCase
             ->setMethods(array("getToken", "isMultiple", "getCustomData"))
             ->getMock();
 
-        $message->expects($this->exactly(4))
+        $message->expects($this->any())
             ->method("getToken")
             ->willReturn($tokens);
 
-        $message->expects($this->exactly(3))
+        $message->expects($this->any())
             ->method("isMultiple")
             ->willReturn(true);
 
-        $message->expects($this->exactly(2))
+        $message->expects($this->any())
             ->method("getCustomData")
             ->willReturn(array("key_0" => "val_0", "key_1" => "val_1"));
 
@@ -51,7 +51,7 @@ class GCMNotificationTest extends PHPUnit_Framework_TestCase
             ->setMethods(array("getToken"))
             ->getMock();
 
-        $message2->expects($this->once())
+        $message2->expects($this->any())
             ->method("getToken")
             ->willReturn(1);
 

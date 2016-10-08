@@ -70,43 +70,22 @@ class APNSNotification extends AbstractNotification
     }
 
     /**
-     * @throws \Exception
-     */
-    public function send()
-    {
-        if ($this->messageQueue->isEmpty()) {
-            return;
-        }
-
-        $this->openConnection()
-            ->write()
-            ->close();
-    }
-
-    private function close()
-    {
-        $this->stream->close();
-    }
-
-    /**
      * Writes all data to the stream
      *
-     * @return self
+     * @param MessageInterface $message
      */
-    private function write()
+    protected function sendImpl(MessageInterface $message)
     {
-        /** @var MessageInterface $message */
-        foreach ($this->messageQueue as $message) {
-            if ($message->getType() !== MessageInterface::TYPE_IOS) {
-                continue;
-            }
-            $payload = $this->createPayload($message);
-            $binMsg = $this->createBinMessage($message, $payload);
-            $this->stream->write(CURLOPT_POSTFIELDS, $binMsg);
-            $this->stream->read();
+        if ($message->getType() !== MessageInterface::TYPE_IOS) {
+            return;
         }
+        $payload = $this->createPayload($message);
+        $binMsg = $this->createBinMessage($message, $payload);
+        $this->stream->write(CURLOPT_POSTFIELDS, $binMsg);
 
-        return $this;
+        $this->notifyOnEachSent($message, $this->stream->read());
+
+        $this->messageQueue->dequeue();
     }
 
     /**

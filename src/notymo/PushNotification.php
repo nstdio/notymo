@@ -4,7 +4,7 @@ namespace nstdio\notymo;
 /**
  * Class PushNotificationComponent
  */
-class PushNotification implements PushNotificationInterface
+class PushNotification implements PushNotificationInterface, LifeCycleCallback
 {
     /**
      * @var PushNotificationInterface[]
@@ -89,5 +89,36 @@ class PushNotification implements PushNotificationInterface
     public function setStreamWrapper(Connection $wrapper)
     {
         throw new \RuntimeException('Not yet implemented.');
+    }
+
+    public function onComplete(callable $param)
+    {
+        $this->invokeMethod('onSent', array($param));
+    }
+
+    /**
+     * Will be called when the every message was sent.
+     *
+     * @param callable $callback
+     */
+    public function onEachSent(callable $callback)
+    {
+        $this->invokeMethod('onEachSent', array($callback));
+    }
+
+    /**
+     * Removes all callbacks.
+     */
+    public function detach()
+    {
+        $this->invokeMethod('detach');
+    }
+
+    /**
+     * @param int $count
+     */
+    public function setRetryCount($count)
+    {
+        $this->invokeMethod('setRetryCount', array($count));
     }
 }
