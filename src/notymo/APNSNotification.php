@@ -58,11 +58,11 @@ class APNSNotification extends AbstractNotification
         $this->live = $live;
 
         if ($this->live && !is_readable($apnsCert)) {
-            throw new InvalidCert("Cannot find certificate file: " . $apnsCert);
+            throw new InvalidCert("Cannot find live certificate file: " . var_export($apnsCert, true));
         }
 
         if (!$this->live && !is_readable($apnsSandboxCert)) {
-            throw new InvalidCert("Cannot find certificate file: " . $apnsSandboxCert);
+            throw new InvalidCert("Cannot find sandbox certificate file: " . var_export($apnsSandboxCert, true));
         }
 
         $this->apnsCert = $apnsCert;
