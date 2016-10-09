@@ -14,13 +14,6 @@ class CurlWrapper implements Connection
      */
     private $stream;
 
-    public function __construct(array $params = array(), $socketAddress = null)
-    {
-        if (!empty($params) && $socketAddress !== null) {
-            $this->open($params, $socketAddress);
-        }
-    }
-
     public function open(array $params, $socketAddress)
     {
         $this->stream = curl_init($socketAddress);
@@ -44,6 +37,8 @@ class CurlWrapper implements Connection
 
     public function read()
     {
-        return curl_exec($this->stream);
+        $response = curl_exec($this->stream);
+
+        return $response;
     }
 }

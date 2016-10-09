@@ -24,7 +24,7 @@ class CallbackInvoker implements LifeCycleCallback, LifeCycleCallbackInvoker
      */
     protected $onError;
 
-    public function callOnComplete($param)
+    public function callOnComplete(MessageQueue $param)
     {
         if (isset($this->onComplete)) {
             call_user_func_array($this->onComplete, array($param));

@@ -1,14 +1,16 @@
 <?php
+namespace nstdio\tests\notymo;
 
 use nstdio\notymo\APNSNotification;
+use nstdio\notymo\LifeCycleCallback;
 use nstdio\notymo\Message;
 use nstdio\notymo\MessageInterface;
 use nstdio\notymo\PushNotificationInterface;
 
-class APNSNotificationTest extends PHPUnit_Framework_TestCase
+class APNSNotificationTest extends TestCase
 {
     /**
-     * @var PushNotificationInterface
+     * @var PushNotificationInterface | LifeCycleCallback
      */
     private $apns;
 
@@ -16,9 +18,7 @@ class APNSNotificationTest extends PHPUnit_Framework_TestCase
     {
         $this->apns = new APNSNotification(false, null, __DIR__ . '/../cacert.pem');
 
-        /** @var \nstdio\notymo\Connection $mockConnection */
-        $mockConnection = $this->getMockBuilder('nstdio\notymo\CurlWrapper')->getMock();
-        $this->apns->setStreamWrapper($mockConnection);
+        $this->apns->setStreamWrapper($this->mockConnection(array()));
     }
 
     public function testApns()
@@ -27,29 +27,26 @@ class APNSNotificationTest extends PHPUnit_Framework_TestCase
             $this->simpleApnsTokenGenerator(),
             $this->simpleApnsTokenGenerator(),
         );
-        /** @var PHPUnit_Framework_MockObject_MockObject | MessageInterface $message */
-        $message = $this->getMockBuilder('nstdio\notymo\Message')
-            ->setMethods(array("getToken", "getType", "isMultiple"))
-            ->getMock();
-
-        $message->expects($this->any())
-            ->method("getToken")
-            ->willReturn($tokens);
+        $message = $this->mockMessage($tokens, array("key_0" => "val_0"));
 
         $message->expects($this->any())
             ->method("getType")
             ->willReturn(MessageInterface::TYPE_IOS);
 
-        $message->expects($this->any())
-            ->method("isMultiple")
-            ->willReturn(is_array($tokens));
+        $message2 = $this->mockMessage($this->simpleApnsTokenGenerator());
+
+        $message2->expects($this->any())
+            ->method("getType")
+            ->willReturn(MessageInterface::TYPE_IOS);
 
         $this->apns->enqueue($message);
+        $this->apns->enqueue($message2);
+
         $this->apns->send();
     }
 
     /**
-     * @expectedException nstdio\notymo\exception\InvalidCert
+     * @expectedException \nstdio\notymo\exception\InvalidCert
      */
     public function testInvalidCert()
     {
@@ -57,16 +54,31 @@ class APNSNotificationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException nstdio\notymo\exception\InvalidCert
+     * @expectedException \nstdio\notymo\exception\InvalidCert
      */
     public function testInvalidSandboxCert()
     {
         new APNSNotification(false, null, 'invalid/path/to/cert.pem');
     }
 
-    public function testEmpty()
+    public function testSendNotCorrectTypeMeg()
     {
+        $message = $this->mockMessage(null);
+
+        $message->expects($this->any())
+            ->method("getType")
+            ->willReturn(Message::TYPE_ANDROID);
+
+        $this->apns->enqueue($message);
+
+        $counter = 0;
+        $this->apns->onEachSent(function () use (&$counter) {
+            ++$counter;
+        });
+
         $this->apns->send();
+
+        self::assertEquals(0, $counter);
     }
 
     private function simpleApnsTokenGenerator()

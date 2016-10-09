@@ -1,8 +1,9 @@
 <?php
+namespace nstdio\tests\notymo;
 
 use nstdio\notymo\PushNotification;
 
-class PushNotificationTest extends PHPUnit_Framework_TestCase
+class PushNotificationTest extends TestCase
 {
 
     public function testSkip()

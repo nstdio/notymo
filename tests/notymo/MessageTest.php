@@ -96,4 +96,11 @@ class MessageTest extends PHPUnit_Framework_TestCase
         self::assertEquals($sound, $this->message->getSound());
         self::assertEquals($type, $this->message->getType());
     }
+
+    public function testTypeOnCtor()
+    {
+        $msg = new Message(Message::TYPE_IOS);
+
+        self::assertEquals(Message::TYPE_IOS, $msg->getMessage());
+    }
 }

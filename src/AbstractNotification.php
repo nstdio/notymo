@@ -55,8 +55,10 @@ abstract class AbstractNotification implements PushNotificationInterface, LifeCy
             $attempt++;
         }
 
-        // TODO think about onComplete.
-        //$this->notifyOnComplete($this->messageQueue);
+        $this->notifyOnComplete($this->messageQueue);
+        if ($this->messageQueue->isEmpty()) {
+            $this->detach();
+        }
         $this->stream->close();
     }
 
@@ -81,6 +83,9 @@ abstract class AbstractNotification implements PushNotificationInterface, LifeCy
     public function setRetryCount($count)
     {
         $this->retryCount = intval($count);
+        if ($this->retryCount <= 0) {
+            throw new \InvalidArgumentException("retryCount must be grader then zero.");
+        }
     }
 
     abstract protected function createPayload(MessageInterface $message);
@@ -94,9 +99,9 @@ abstract class AbstractNotification implements PushNotificationInterface, LifeCy
         return $this;
     }
 
-    protected function notifyOnComplete(MessageInterface $message)
+    protected function notifyOnComplete(MessageQueue $message)
     {
-        $this->invoker->callOnComplete(array($message));
+        $this->invoker->callOnComplete($message);
     }
 
     protected function notifyOnEachSent(MessageInterface $message, $feedBack)

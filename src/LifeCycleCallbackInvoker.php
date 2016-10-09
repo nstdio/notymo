@@ -9,7 +9,7 @@ namespace nstdio\notymo;
  */
 interface LifeCycleCallbackInvoker
 {
-    public function callOnComplete($param);
+    public function callOnComplete(MessageQueue $param);
 
     public function callOnEachSent(MessageInterface $message, $feedBack);
 }

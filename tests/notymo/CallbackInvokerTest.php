@@ -1,8 +1,10 @@
 <?php
+namespace nstdio\tests\notymo;
 
 use nstdio\notymo\CallbackInvoker;
+use nstdio\notymo\MessageQueue;
 
-class CallbackInvokerTest extends PHPUnit_Framework_TestCase
+class CallbackInvokerTest extends TestCase
 {
     /**
      * @var CallbackInvoker
@@ -23,21 +25,21 @@ class CallbackInvokerTest extends PHPUnit_Framework_TestCase
         };
         $this->invoker->onComplete($callback);
 
-        $this->invoker->callOnComplete(array());
-        $this->invoker->callOnComplete(array());
+        $this->invoker->callOnComplete(new MessageQueue());
+        $this->invoker->callOnComplete(new MessageQueue());
         self::assertEquals(2, $counter);
 
         $this->invoker->onEachSent(clone $callback);
 
-        $this->invoker->callOnEachSent($this->getMock('\nstdio\notymo\Message'));
+        $this->invoker->callOnEachSent($this->mockMessage(1));
 
         self::assertEquals(3, $counter);
 
 
         $this->invoker->detach();
 
-        $this->invoker->callOnComplete(array());
-        $this->invoker->callOnEachSent($this->getMock('\nstdio\notymo\Message'));
+        $this->invoker->callOnComplete(new MessageQueue());
+        $this->invoker->callOnEachSent($this->mockMessage(0));
 
         self::assertEquals(3, $counter);
     }
