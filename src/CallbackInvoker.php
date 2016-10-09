@@ -41,7 +41,7 @@ class CallbackInvoker implements LifeCycleCallback, LifeCycleCallbackInvoker
     /**
      * @inheritdoc
      */
-    public function onComplete(callable $callback)
+    public function onComplete(\Closure $callback)
     {
         $this->onComplete = $callback;
     }
@@ -49,7 +49,7 @@ class CallbackInvoker implements LifeCycleCallback, LifeCycleCallbackInvoker
     /**
      * @inheritdoc
      */
-    public function onEachSent(callable $callback)
+    public function onEachSent(\Closure $callback)
     {
         $this->onEachSent = $callback;
     }

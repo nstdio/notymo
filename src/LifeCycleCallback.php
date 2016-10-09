@@ -1,5 +1,6 @@
 <?php
 namespace nstdio\notymo;
+use Closure;
 
 /**
  * Interface LifeCycleListener
@@ -20,17 +21,19 @@ interface LifeCycleCallback
      * });
      *
      * ```
-     * @param callable $callback
+     * @param Closure $callback
+     *
+     * @return
      */
-    public function onComplete(callable $callback);
+    public function onComplete(Closure $callback);
 
     /**
      * Will be called when the every message was sent.
      * `$callback` signature: `function(MessageInterface $message, array $feedBack)`
      *
-     * @param callable $callback
+     * @param Closure $callback
      */
-    public function onEachSent(callable $callback);
+    public function onEachSent(Closure $callback);
 
     /**
      * Removes all callbacks.

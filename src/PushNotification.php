@@ -91,17 +91,18 @@ class PushNotification implements PushNotificationInterface, LifeCycleCallback
         throw new \RuntimeException('Not yet implemented.');
     }
 
-    public function onComplete(callable $param)
+    /**
+     * @inheritdoc
+     */
+    public function onComplete(\Closure $param)
     {
         $this->invokeMethod('onSent', array($param));
     }
 
     /**
-     * Will be called when the every message was sent.
-     *
-     * @param callable $callback
+     * @inheritdoc
      */
-    public function onEachSent(callable $callback)
+    public function onEachSent(\Closure $callback)
     {
         $this->invokeMethod('onEachSent', array($callback));
     }

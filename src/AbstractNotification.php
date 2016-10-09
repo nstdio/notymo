@@ -109,12 +109,12 @@ abstract class AbstractNotification implements PushNotificationInterface, LifeCy
         $this->invoker->callOnEachSent($message, $feedBack);
     }
 
-    public function onComplete(callable $listener)
+    public function onComplete(\Closure $listener)
     {
         $this->invoker->onComplete($listener);
     }
 
-    public function onEachSent(callable $callback)
+    public function onEachSent(\Closure $callback)
     {
         $this->invoker->onEachSent($callback);
     }
