@@ -29,7 +29,7 @@ class CallbackInvokerTest extends TestCase
         $this->invoker->callOnComplete(new MessageQueue());
         self::assertEquals(2, $counter);
 
-        $this->invoker->onEachSent(clone $callback);
+        $this->invoker->onEachSent($callback);
 
         $this->invoker->callOnEachSent($this->mockMessage(1));
 
