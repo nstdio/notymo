@@ -97,3 +97,38 @@ $gcm->enqueue($msg);
 $gcm->send();
 ```
 
+
+## Applying lifecycle callbacks
+
+### [LifeCycleCallback](https://github.com/nstdio/notymo/blob/master/src/LifeCycleCallback.php "interface LifeCycleCallback")
+
+| Method       | Comment | Callback signature |
+| -------------| ------- | ------------------ |
+| `void onComplete(Closure $callback)` | Will be called when all messages are sent. | `void function(MessageQueue $messages)` |
+| `void onEachSent(Closure $callback)` | Will be called when the every message was sent. | `void function(MessageInterface $message, array $response)` |
+| `void onError(Closure $callback)`    | Will be called when error occurs. Note that when error occured and this callback is not defined, an exception will be thrown. | `void function(MessageInterface $message, PushNotificationException $exc)` |
+| `void detach()`     | This method has no `Closure` argument because it is not involved in the message sending lifecycle. The single assignment of this method to remove callbacks. Will be called immediately after `onSent`.| - |
+
+```php
+// ...
+
+$push->onComplete(function(MessageQueue $queue) {
+    /** @var MessageInterface $message */
+    foreach ($queue as $message) {
+        printf("Message %s not sent\n", $message->getToken())
+    }
+});
+
+$push->onSent(function(MessageInterface $message, $response) use ($model) {
+    $model->save(array(
+        'device_token' => $message->getToken(),
+        'is_sent' => $response['success'],
+    ));
+});
+
+$push->onError(function(MessageInterface $message, PushNotificationException $e) {
+    printf("Error %s occurs while sending %s\n", $message->getToken(), $e->getMessage());
+});
+
+$push->send();
+```

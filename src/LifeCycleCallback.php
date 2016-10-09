@@ -12,18 +12,16 @@ interface LifeCycleCallback
 {
     /**
      * Will be called when all messages are sent.
-     * `$callback` signature: `function(MessageInterface $message)`
+     * `$callback` signature: `function(MessageQueue $messages)`
      * Usage
      * ```php
      *
-     * $push->onComplete(function(MessageInterface $message) {
+     * $push->onComplete(function(MessageQueue $messages) {
      *
      * });
      *
      * ```
      * @param Closure $callback
-     *
-     * @return
      */
     public function onComplete(Closure $callback);
 
@@ -36,7 +34,7 @@ interface LifeCycleCallback
     public function onEachSent(Closure $callback);
 
     /**
-     * Will be called when error occurs.
+     * Will be called when error occurs. Note that when error occured and this callback is not defined, an exception will be thrown.
      * `$callback` signature: `function(MessageInterface $message, PushNotificationException $exc)`
      *
      * @param Closure $callback
@@ -44,7 +42,8 @@ interface LifeCycleCallback
     public function onError(Closure $callback);
 
     /**
-     * Removes all callbacks.
+     * This method has no `Closure` argument because it is not involved in the message
+     * sending lifecycle. The single assignment of this method - to remove callbacks.
      * Will be called immediately after `onSent`.
      */
     public function detach();
