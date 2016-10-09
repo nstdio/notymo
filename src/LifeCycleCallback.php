@@ -36,6 +36,14 @@ interface LifeCycleCallback
     public function onEachSent(Closure $callback);
 
     /**
+     * Will be called when error occurs.
+     * `$callback` signature: `function(MessageInterface $message, PushNotificationException $exc)`
+     *
+     * @param Closure $callback
+     */
+    public function onError(Closure $callback);
+
+    /**
      * Removes all callbacks.
      * Will be called immediately after `onSent`.
      */

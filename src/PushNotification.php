@@ -1,5 +1,6 @@
 <?php
 namespace nstdio\notymo;
+use Closure;
 
 /**
  * Class PushNotificationComponent
@@ -121,5 +122,13 @@ class PushNotification implements PushNotificationInterface, LifeCycleCallback
     public function setRetryCount($count)
     {
         $this->invokeMethod('setRetryCount', array($count));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function onError(Closure $callback)
+    {
+        $this->invokeMethod('onError', array($callback));
     }
 }

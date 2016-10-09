@@ -1,5 +1,6 @@
 <?php
 namespace nstdio\notymo;
+use nstdio\notymo\exception\PushNotificationException;
 
 /**
  * Class AbstractNotification
@@ -27,7 +28,7 @@ abstract class AbstractNotification implements PushNotificationInterface, LifeCy
     /**
      * @var int
      */
-    protected $retryCount = 3;
+    protected $retryCount = 1;
 
     /**
      * AbstractNotification constructor.
@@ -99,14 +100,19 @@ abstract class AbstractNotification implements PushNotificationInterface, LifeCy
         return $this;
     }
 
-    protected function notifyOnComplete(MessageQueue $message)
+    protected function notifyOnComplete(MessageQueue $messages)
     {
-        $this->invoker->callOnComplete($message);
+        $this->invoker->callOnComplete($messages);
     }
 
     protected function notifyOnEachSent(MessageInterface $message, $feedBack)
     {
         $this->invoker->callOnEachSent($message, $feedBack);
+    }
+
+    protected function notifyOnError(MessageInterface $message, PushNotificationException $exc)
+    {
+        $this->invoker->callOnError($message, $exc);
     }
 
     public function onComplete(\Closure $listener)
@@ -117,6 +123,11 @@ abstract class AbstractNotification implements PushNotificationInterface, LifeCy
     public function onEachSent(\Closure $callback)
     {
         $this->invoker->onEachSent($callback);
+    }
+
+    public function onError(\Closure $callback)
+    {
+        $this->invoker->onError($callback);
     }
 
     public function detach()

@@ -1,6 +1,8 @@
 <?php
 namespace nstdio\notymo;
 
+use nstdio\notymo\exception\ConnectionException;
+
 /**
  * Class GCMNotificationComponent
  */
@@ -49,14 +51,23 @@ class GCMNotification extends AbstractNotification
 
     /**
      * @param $message
+     *
+     * @return mixed
      */
     private function sendMessage(MessageInterface $message)
     {
         $data = $this->createPayload($message);
 
         $this->stream->write(CURLOPT_POSTFIELDS, json_encode($data));
+        $response = null;
 
-        return $this->stream->read();
+        try {
+            $response = $this->stream->read();
+        } catch (ConnectionException $e) {
+            $this->notifyOnError($message, $e);
+        }
+
+        return $response;
     }
 
     /**
@@ -122,6 +133,7 @@ class GCMNotification extends AbstractNotification
             CURLOPT_POST           => true,
             CURLOPT_HTTPHEADER     => $this->headers,
             CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => false,
         );
     }
 

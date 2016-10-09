@@ -1,6 +1,9 @@
 <?php
 namespace nstdio\notymo;
 
+use Closure;
+use nstdio\notymo\exception\PushNotificationException;
+
 /**
  * Class CallbackInvoker
  *
@@ -10,20 +13,23 @@ namespace nstdio\notymo;
 class CallbackInvoker implements LifeCycleCallback, LifeCycleCallbackInvoker
 {
     /**
-     * @var callable
+     * @var Closure
      */
     protected $onComplete;
 
     /**
-     * @var callable
+     * @var Closure
      */
     protected $onEachSent;
 
     /**
-     * @var callable
+     * @var Closure
      */
     protected $onError;
 
+    /**
+     * @inheritdoc
+     */
     public function callOnComplete(MessageQueue $param)
     {
         if (isset($this->onComplete)) {
@@ -31,10 +37,25 @@ class CallbackInvoker implements LifeCycleCallback, LifeCycleCallbackInvoker
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function callOnEachSent(MessageInterface $message, $feedBack = null)
     {
         if (isset($this->onEachSent)) {
             call_user_func_array($this->onEachSent, array($message, $feedBack));
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function callOnError(MessageInterface $message, PushNotificationException $exc)
+    {
+        if (isset($this->onError)) {
+            call_user_func_array($this->onError, array($message, $exc));
+        } else {
+            throw $exc;
         }
     }
 
@@ -55,8 +76,15 @@ class CallbackInvoker implements LifeCycleCallback, LifeCycleCallbackInvoker
     }
 
     /**
-     * Removes all callbacks.
-     * Will be called immediately after `onSent`.
+     * @inheritdoc
+     */
+    public function onError(Closure $callback)
+    {
+        $this->onError = $callback;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function detach()
     {

@@ -1,6 +1,8 @@
 <?php
 namespace nstdio\notymo;
 
+use nstdio\notymo\exception\ConnectionException;
+
 /**
  * Class CurlWrapper
  *
@@ -14,6 +16,9 @@ class CurlWrapper implements Connection
      */
     private $stream;
 
+    /**
+     * @inheritdoc
+     */
     public function open(array $params, $socketAddress)
     {
         $this->stream = curl_init($socketAddress);
@@ -23,11 +28,17 @@ class CurlWrapper implements Connection
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function write($option, $string)
     {
         curl_setopt($this->stream, $option, $string);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function close()
     {
         if (is_resource($this->stream)) {
@@ -35,10 +46,15 @@ class CurlWrapper implements Connection
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function read()
     {
         $response = curl_exec($this->stream);
-
+        if ($response === false) {
+            throw new ConnectionException(curl_error($this->stream), curl_errno($this->stream));
+        }
         return $response;
     }
 }
