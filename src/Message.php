@@ -1,6 +1,7 @@
 <?php
 namespace nstdio\notymo;
-use nstdio\notymo\exception\UnsupportedNotificationType;
+
+use nstdio\notymo\exception\UnsupportedNotificationTypeException;
 
 /**
  * Class Message
@@ -109,7 +110,7 @@ class Message implements MessageInterface
     public function setType($type)
     {
         if ($type !== self::TYPE_IOS && $type !== self::TYPE_ANDROID) {
-            throw new UnsupportedNotificationType("Invalid message type : $type, please use one of MessageInterface constants.");
+            throw new UnsupportedNotificationTypeException("Invalid message type : $type, please use one of MessageInterface constants.");
         }
         $this->type = $type;
     }

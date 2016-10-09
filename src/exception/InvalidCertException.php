@@ -2,12 +2,12 @@
 namespace nstdio\notymo\exception;
 
 /**
- * Class InvalidCert
+ * Class InvalidCertException
  *
  * @package nstdio\notymo\exception
  * @author  Edgar Asatryan <nstdio@gmail.com>
  */
-class InvalidCert extends PushNotificationException
+class InvalidCertException extends PushNotificationException
 {
 
 }

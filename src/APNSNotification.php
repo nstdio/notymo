@@ -1,7 +1,7 @@
 <?php
 namespace nstdio\notymo;
 
-use nstdio\notymo\exception\InvalidCert;
+use nstdio\notymo\exception\InvalidCertException;
 
 /**
  * Class APNSNotificationComponent
@@ -50,7 +50,7 @@ class APNSNotification extends AbstractNotification
      * @param string|null $apnsCert
      * @param string|null $apnsSandboxCert
      *
-     * @throws InvalidCert When cannot find one of certificate files.
+     * @throws InvalidCertException When cannot find one of certificate files.
      */
     public function __construct($live = false, $apnsCert = null, $apnsSandboxCert = null)
     {
@@ -58,11 +58,11 @@ class APNSNotification extends AbstractNotification
         $this->live = $live;
 
         if ($this->live && !is_readable($apnsCert)) {
-            throw new InvalidCert("Cannot find live certificate file: " . var_export($apnsCert, true));
+            throw new InvalidCertException("Cannot find live certificate file: " . var_export($apnsCert, true));
         }
 
         if (!$this->live && !is_readable($apnsSandboxCert)) {
-            throw new InvalidCert("Cannot find sandbox certificate file: " . var_export($apnsSandboxCert, true));
+            throw new InvalidCertException("Cannot find sandbox certificate file: " . var_export($apnsSandboxCert, true));
         }
 
         $this->apnsCert = $apnsCert;

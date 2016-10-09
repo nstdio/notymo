@@ -46,7 +46,7 @@ class APNSNotificationTest extends TestCase
     }
 
     /**
-     * @expectedException \nstdio\notymo\exception\InvalidCert
+     * @expectedException \nstdio\notymo\exception\InvalidCertException
      */
     public function testInvalidCert()
     {
@@ -54,7 +54,7 @@ class APNSNotificationTest extends TestCase
     }
 
     /**
-     * @expectedException \nstdio\notymo\exception\InvalidCert
+     * @expectedException \nstdio\notymo\exception\InvalidCertException
      */
     public function testInvalidSandboxCert()
     {

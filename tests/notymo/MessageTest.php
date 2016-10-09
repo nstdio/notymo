@@ -66,7 +66,7 @@ class MessageTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \nstdio\notymo\exception\UnsupportedNotificationType
+     * @expectedException \nstdio\notymo\exception\UnsupportedNotificationTypeException
      */
     public function testIncorrectMessageType()
     {

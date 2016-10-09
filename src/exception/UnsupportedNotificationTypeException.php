@@ -2,12 +2,12 @@
 namespace nstdio\notymo\exception;
 
 /**
- * Class UnsupportedNotificationType
+ * Class UnsupportedNotificationTypeException
  *
  * @package nstdio\notymo\exception
  * @author  Edgar Asatryan <nstdio@gmail.com>
  */
-class UnsupportedNotificationType extends PushNotificationException
+class UnsupportedNotificationTypeException extends PushNotificationException
 {
 
 }
