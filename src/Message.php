@@ -135,6 +135,19 @@ class Message implements MessageInterface
         return is_array($this->token);
     }
 
+    public function cloneWith($type, $tokens)
+    {
+        if ($type === $this->type) {
+            return $this;
+        }
+        $cloned = clone $this;
+
+        $cloned->setType($type);
+        $cloned->token = $tokens;
+
+        return $cloned;
+    }
+
     /**
      * @param $token
      */

@@ -103,4 +103,30 @@ class MessageTest extends PHPUnit_Framework_TestCase
 
         self::assertEquals(Message::TYPE_IOS, $msg->getMessage());
     }
+
+    public function testCloneWithSameType()
+    {
+        $msg = new Message(Message::TYPE_IOS);
+
+        $msgClone = $msg->cloneWith(Message::TYPE_IOS, array());
+
+        self::assertSame($msg, $msgClone);
+    }
+
+    public function testCloneWith()
+    {
+        $androidTokens = range(0, 999);
+        $iOSTokens = range(1000, 1999);
+
+        $msg = new Message(Message::TYPE_ANDROID);
+        $msg->setToken($androidTokens);
+
+        $msgClone = $msg->cloneWith(Message::TYPE_IOS, $iOSTokens);
+
+        self::assertNotSame($msgClone, $msg);
+        self::assertEquals($androidTokens, $msg->getToken());
+        self::assertEquals($iOSTokens, $msgClone->getToken());
+        self::assertEquals($msg->getType(), Message::TYPE_ANDROID);
+        self::assertEquals($msgClone->getType(), Message::TYPE_IOS);
+    }
 }

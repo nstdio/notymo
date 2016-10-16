@@ -41,4 +41,5 @@ interface MessageInterface
 
     public function getType();
 
+    public function cloneWith($type, $tokens);
 }
