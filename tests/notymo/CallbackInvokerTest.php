@@ -2,6 +2,8 @@
 namespace nstdio\tests\notymo;
 
 use nstdio\notymo\CallbackInvoker;
+use nstdio\notymo\exception\PushNotificationException;
+use nstdio\notymo\MessageInterface;
 use nstdio\notymo\MessageQueue;
 
 class CallbackInvokerTest extends TestCase
@@ -42,5 +44,28 @@ class CallbackInvokerTest extends TestCase
         $this->invoker->callOnEachSent($this->mockMessage(0));
 
         self::assertEquals(3, $counter);
+    }
+
+    /**
+     * @expectedException \nstdio\notymo\exception\PushNotificationException
+     * @expectedExceptionMessage Test msg.
+     */
+    public function testOnErrorException()
+    {
+        $this->invoker->callOnError($this->mockMessage(0), new PushNotificationException("Test msg."));
+    }
+
+    public function testOnErrorCalled()
+    {
+        $counter = 0;
+        $this2 = $this;
+        $errorMessage = 'Error message.';
+        $this->invoker->onError(function(MessageInterface $message, PushNotificationException $exc) use (&$counter, &$this2, $errorMessage) {
+            ++$counter;
+            $this2->assertEquals($errorMessage, $exc->getMessage());
+        });
+
+        $this->invoker->callOnError($this->mockMessage(0), new PushNotificationException($errorMessage));
+        self::assertEquals(1, $counter);
     }
 }
