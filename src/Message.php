@@ -41,6 +41,26 @@ class Message implements MessageInterface
      */
     private $type;
 
+    /**
+     * Creates new ios message.
+     *
+     * @return MessageInterface
+     */
+    public static function ios()
+    {
+        return new Message(self::TYPE_IOS);
+    }
+
+    /**
+     * Creates new android message.
+     *
+     * @return MessageInterface
+     */
+    public static function android()
+    {
+        return new Message(self::TYPE_ANDROID);
+    }
+
     public function __construct($type = null)
     {
         if ($type !== null) {

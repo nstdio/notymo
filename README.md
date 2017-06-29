@@ -40,8 +40,7 @@ $push = new PushNotification(array(
  * If we have multiple recipients and all of them should receive same data we can create 
  * one single instance of Message class and send messages at once.
  */
-$msg = new Message();
-$msg->setType(Message::TYPE_ANDROID);
+$msg = Message::android();
 $msg->setMessage("You have a notification.");
 $msg->setSound("default");
 $msg->setBadge(2);
@@ -51,10 +50,7 @@ $msg->setToken(range(0, 10000));
 /**
  * Just clone original message and replace old device's tokens with new once for iOS devices.
  */
-$msg2 = clone $msg;
-$msg2->setToken(range(10000, 20000));
-$msg2->setType(Message::TYPE_IOS);
-
+$msg2 = $msg->cloneWith(Message::TYPE_IOS, range(10000, 20000));
 
 $push->enqueue($msg);
 $push->enqueue($msg2); // Adding messages to queue
@@ -69,7 +65,7 @@ use nstdio\notymo\Message;
 
 $apns = new APNSNotification(true, 'live_cert.pem');
 
-$msg = new Message(Message::TYPE_IOS); // We can pass message type to constructor.
+$msg = Message::ios();
 $msg->setMessage("This notification sent by cron.");
 $msg->setSound("bang_bang");
 $msg->setCustomData(array("segue" => "toSignInView"));
@@ -88,7 +84,7 @@ use nstdio\notymo\Message;
 
 $gcm = new GCMNotification("gcm_api_key");
 
-$msg = new Message(Message::TYPE_ANDROID);
+$msg = Message::ios();
 // ... same story as in iOS example.
 $msg->setToken(range('A', 'Z'));
 

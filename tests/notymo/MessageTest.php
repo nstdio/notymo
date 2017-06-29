@@ -129,4 +129,10 @@ class MessageTest extends PHPUnit_Framework_TestCase
         self::assertEquals($msg->getType(), Message::TYPE_ANDROID);
         self::assertEquals($msgClone->getType(), Message::TYPE_IOS);
     }
+
+    public function testFactory()
+    {
+        self::assertEquals(Message::ios()->getType(), Message::TYPE_IOS);
+        self::assertEquals(Message::android()->getType(), Message::TYPE_ANDROID);
+    }
 }
